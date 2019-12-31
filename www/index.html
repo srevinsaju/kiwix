@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
 
-        <title>Kiwix</title>
+        <title>Sugar Wikipedia + </title>
         <meta name="description" content="Offline Wikipedia reader">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!--
@@ -32,7 +32,15 @@
 
         You should have received a copy of the GNU General Public License
         along with Kiwix (file LICENSE-GPLv3.txt).  If not, see <https://www.gnu.org/licenses/>
+        =======================================================================================
 
+        Sugar, an Educational Organization seeks to serve Offline wikipedia pages 
+        With the deprecation of mwlib (media wiki lib parser) and the powerful
+        capacity of Kiwix, the mwlib was replaced to Kiwix. Parts of Kiwix Js has
+        been changed to brand Sugar with Kiwix attribution given, in accordance with 
+        GPL v3 
+
+        ========================================================================================
         -->
 
         <!-- Bootstrap -->
@@ -54,7 +62,7 @@
         <section id="search-article" role="region">
             <header id="top">
                 <nav class="navbar navbar-expand-md bg-light" role="navigation">
-                    <a class="navbar-brand">Kiwix 2.7-WIP</a>
+                    <a class="navbar-brand">Sugar Wikipedia+</a>
 
                     <!-- Toggler/collapsible Button -->
                     <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -96,7 +104,7 @@
                 <div id="about" style="display: none;" class="container">
                     <h2>
                     <img src="img/icons/kiwix-60.png" alt="Kiwix icon"/>
-                    Kiwix : offline Wikipedia viewer
+                    Offline Wikipedia viewer, powered by Kiwix
                     </h2>
                     <p>Official site : <a href="https://www.kiwix.org/" target="_blank">https://www.kiwix.org/</a></p>
                     <p>If your Internet access is expensive/rare/slow/unreliable/watched/censored, you still can browse amazing amounts of knowledge and culture.</p>
@@ -198,130 +206,45 @@
                     <br/>
                 </div>
 
-                <div id="configuration" style="display: none;">
+                <div id="configuration" style="">
                     <div class="container">
-                        <h2>Configuration</h2>
-                        <p id="downloadInstruction">This application needs a ZIM archive to work. For download
+                        <h2>Let's get started</h2>
+                        <p id="downloadInstruction">
+                            Wikipedia is such a vast resource of endless learning. 
+                            To adapt to children's growing needs of Educational material
+                            
+                            This application needs a ZIM archive to work. For download
                             instructions, please see the About section</p>
                         <div id="selectorsDisplay" style="display: none;">
                             <p>Drag and drop a new ZIM file, or <a href="#" id="selectorsDisplayLink">display
                                     file selectors</a></p>
                         </div>
-                        <div id="openLocalFiles" style="display: none;">
+                        <div id="openLocalFiles" style="display: block;">
                             <p>Please select or drag and drop the .zim file (or all the .zimaa, .zimab etc in
                                 case of a split ZIM file)</p>
-                            <input type="file" id="archiveFiles" multiple class="btn"
-                                accept=".zim,.zimaa,.zimab,.zimac,.zimad,.zimae,.zimaf,.zimag,.zimah,.zimai,.zimaj,.zimak,.zimal,.zimam,.ziman,.zimao,.zimap,.zimaq,.zimar,.zimas,.zimat,.zimau,.zimav,.zimaw,.zimax,.zimay,.zimaz,.zimba,.zimbb,.zimbc,.zimbd,.zimbe,.zimbf,.zimbg,.zimbh,.zimbi,.zimbj,.zimbk,.zimbl,.zimbm,.zimbn,.zimbo,.zimbp,.zimbq,.zimbr,.zimbs,.zimbt,.zimbu,.zimbv,.zimbw,.zimbx,.zimby,.zimbz" /><br />
+                            <input type="file" id="archiveFiles" multiple="" class="btn" accept=".zim,.zimaa,.zimab,.zimac,.zimad,.zimae,.zimaf,.zimag,.zimah,.zimai,.zimaj,.zimak,.zimal,.zimam,.ziman,.zimao,.zimap,.zimaq,.zimar,.zimas,.zimat,.zimau,.zimav,.zimaw,.zimax,.zimay,.zimaz,.zimba,.zimbb,.zimbc,.zimbd,.zimbe,.zimbf,.zimbg,.zimbh,.zimbi,.zimbj,.zimbk,.zimbl,.zimbm,.zimbn,.zimbo,.zimbp,.zimbq,.zimbr,.zimbs,.zimbt,.zimbu,.zimbv,.zimbw,.zimbx,.zimby,.zimbz"><br>
                             <strong>Only Mediawiki-based (wiki*.zim* files, like wikipedia), StackExchange and
                                 some video-based ZIMs (e.g. TEDx) have been tested</strong>.
-                            Dynamic content is not currently supported in jQuery mode.<br />
+                            Dynamic content is not currently supported in jQuery mode.<br>
                         </div>
                         <div id="scanningForArchives" style="display: none;">
-                            <br /> Scanning for archives... Please wait <img src="img/spinner.gif" alt="Please wait..." />
+                            <br> Scanning for archives... Please wait <img src="img/spinner.gif" alt="Please wait...">
                         </div>
                         <div id="chooseArchiveFromLocalStorage" style="display: none;">
-                            <br /> Please select the archive you want to use : <select id="archiveList"
-                                class="form-control"></select>
-                            <br /><button type="button" class="btn btn-light" id="btnRescanDeviceStorage">Rescan</button>
+                            <br> Please select the archive you want to use : <select id="archiveList" class="form-control"></select>
+                            <br><button type="button" class="btn btn-light" id="btnRescanDeviceStorage">Rescan</button>
                             Rescans your SD Cards and internal memory
                         </div>
                     </div>
-                    <br />
-                    <div class="container">
-                        <h3>Display settings</h3>
-                        <div class="card card-info" id="displaySettingsDiv">
-                            <div class="card-header">Display options:</div>
-                            <div class="card-body">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="hideActiveContentWarning"
-                                            id="hideActiveContentWarningCheck">
-                                        <strong>Permanently hide active content warning</strong> (for
-                                        experienced users)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="container">
-                        <h3>Performance settings</h3>
-                        <div class="card card-warning" id="cacheSettingsDiv">
-                            <div class="card-header">Speed up archive access</div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="radio">
-                                            <p>Kiwix JS can speed up the display of articles by caching assets:</p>
-                                            <label>
-                                                <input type="radio" name="cachedAssetsMode" value="true"
-                                                    id="cachedAssetsModeRadioTrue" checked>
-                                                <strong>Cache assets</strong> (recommended)
-                                            </label>
-                                        </div>
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="cachedAssetsMode" value="false"
-                                                    id="cachedAssetsModeRadioFalse">
-                                                <strong>Do not cache assets</strong> (empties caches: for low-memory
-                                                devices)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div id="cacheStatusPanel" class="card card-footer" style="overflow: hidden">
-                                            <div>
-                                                <p><b>Cache status:</b></p>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-7">
-                                                    <p>Cache used: <b id="cacheUsed"></b></p>
-                                                </div>
-                                                <div class="col-5">
-                                                    <p>Assets: <b id="assetsCount"></b></p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="container">
-                        <h3>Expert settings</h3>
-                        <div class="card card-danger" id="contentInjectionModeDiv">
-                            <div class="card-header">Content injection mode</div>
-                            <div class="card-body">
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="contentInjectionMode" value="jquery"
-                                            id="jQueryModeRadio" checked>
-                                        <strong>JQuery</strong> (stable and safe)
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="contentInjectionMode" value="serviceworker"
-                                            id="serviceworkerModeRadio">
-                                        <strong>ServiceWorker</strong> (not available on all platforms, but supports
-                                        more ZIM files)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="container">
-                        <div class="card card-warning" id="apiStatusDiv">
-                            <div class="card-header">API Status</div>
-                            <div class="card-body">
-                                <div id="serviceWorkerStatus"></div>
-                                <div id="messageChannelStatus"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
+                    <br>
+                    
+                    <br>
+                    
+                    <br>
+                    
+                    <br>
+                    
+                    <br>
                 </div>
                 <div id="welcomeText" class="container">
                     You can search the content of your ZIM archive by typing in the above search field.

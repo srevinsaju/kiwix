@@ -75,7 +75,7 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
 
     // Set parameters and associated UI elements from cookie
     params['hideActiveContentWarning'] = cookies.getItem('hideActiveContentWarning') === 'true';
-    document.getElementById('hideActiveContentWarningCheck').checked = params.hideActiveContentWarning;
+    
     // A global parameter that turns caching on or off and deletes the cache (it defaults to true unless explicitly turned off in UI)
     params['useCache'] = cookies.getItem('useCache') !== 'false';
     
@@ -261,8 +261,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
         $("#searchingArticles").hide();
         $('#articleContent').hide();
         $('.alert').hide();
-        refreshAPIStatus();
-        refreshCacheStatus();
         return false;
     });
     $('#btnAbout').on('click', function(e) {
@@ -291,61 +289,7 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
         params.hideActiveContentWarning = this.checked ? true : false;
         cookies.setItem('hideActiveContentWarning', params.hideActiveContentWarning, Infinity);
     });
-    document.getElementById('cachedAssetsModeRadioTrue').addEventListener('change', function (e) {
-        if (e.target.checked) {
-            cookies.setItem('useCache', true, Infinity);
-            params.useCache = true;
-            refreshCacheStatus();
-        }
-    });
-    document.getElementById('cachedAssetsModeRadioFalse').addEventListener('change', function (e) {
-        if (e.target.checked) {
-            cookies.setItem('useCache', false, Infinity);
-            params.useCache = false;
-            // Delete all caches
-            resetCssCache();
-            if ('caches' in window) caches.delete(CACHE_NAME);
-            refreshCacheStatus();
-        }
-    });
-
-    /**
-     * Displays or refreshes the API status shown to the user
-     */
-    function refreshAPIStatus() {
-        var apiStatusPanel = document.getElementById('apiStatusDiv');
-        apiStatusPanel.classList.remove('card-success', 'card-warning');
-        var apiPanelClass = 'card-success';
-        if (isMessageChannelAvailable()) {
-            $('#messageChannelStatus').html("MessageChannel API available");
-            $('#messageChannelStatus').removeClass("apiAvailable apiUnavailable")
-                    .addClass("apiAvailable");
-        } else {
-            apiPanelClass = 'card-warning';
-            $('#messageChannelStatus').html("MessageChannel API unavailable");
-            $('#messageChannelStatus').removeClass("apiAvailable apiUnavailable")
-                    .addClass("apiUnavailable");
-        }
-        if (isServiceWorkerAvailable()) {
-            if (isServiceWorkerReady()) {
-                $('#serviceWorkerStatus').html("ServiceWorker API available, and registered");
-                $('#serviceWorkerStatus').removeClass("apiAvailable apiUnavailable")
-                        .addClass("apiAvailable");
-            } else {
-                apiPanelClass = 'card-warning';
-                $('#serviceWorkerStatus').html("ServiceWorker API available, but not registered");
-                $('#serviceWorkerStatus').removeClass("apiAvailable apiUnavailable")
-                        .addClass("apiUnavailable");
-            }
-        } else {
-            apiPanelClass = 'card-warning';
-            $('#serviceWorkerStatus').html("ServiceWorker API unavailable");
-            $('#serviceWorkerStatus').removeClass("apiAvailable apiUnavailable")
-                    .addClass("apiUnavailable");
-        }
-        apiStatusPanel.classList.add(apiPanelClass);
-
-    }
+    
 
     /**
      * Queries Service Worker if possible to determine cache capability and returns an object with cache attributes
@@ -382,27 +326,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
         });
     }
 
-    /** 
-     * Refreshes the UI (Configuration) with the cache attributes obtained from getCacheAttributes()
-     */
-    function refreshCacheStatus() {
-        // Update radio buttons and checkbox
-        document.getElementById('cachedAssetsModeRadio' + (params.useCache ? 'True' : 'False')).checked = true;
-        // Get cache attributes, then update the UI with the obtained data
-        getCacheAttributes().then(function (cache) {
-            document.getElementById('cacheUsed').innerHTML = cache.description;
-            document.getElementById('assetsCount').innerHTML = cache.count;
-            var cacheSettings = document.getElementById('cacheSettingsDiv');
-            var cacheStatusPanel = document.getElementById('cacheStatusPanel');
-            [cacheSettings, cacheStatusPanel].forEach(function (card) {
-                // IE11 cannot remove more than one class from a list at a time
-                card.classList.remove('card-success');
-                card.classList.remove('card-warning');
-                if (params.useCache) card.classList.add('card-success');
-                else card.classList.add('card-warning');
-            });
-        });
-    }
 
     var contentInjectionMode;
     var keepAliveServiceWorkerHandle;
@@ -445,8 +368,7 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
                 navigator.serviceWorker.controller.postMessage({'action': 'disable'});
                 messageChannel = null;
             }
-            refreshAPIStatus();
-            // User has switched to jQuery mode, so no longer needs CACHE_NAME
+            
             // We should empty it to prevent unnecessary space usage
             if ('caches' in window) caches.delete(CACHE_NAME);
         } else if (value === 'serviceworker') {
@@ -466,7 +388,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
                 navigator.serviceWorker.register('../service-worker.js').then(function (reg) {
                     // The ServiceWorker is registered
                     serviceWorkerRegistration = reg;
-                    refreshAPIStatus();
                     
                     // We need to wait for the ServiceWorker to be activated
                     // before sending the first init message
@@ -480,7 +401,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
                             initOrKeepAliveServiceWorker();
                             // We need to refresh cache status here on first activation because SW was inaccessible till now
                             // We also initialize the CACHE_NAME constant in SW here
-                            refreshCacheStatus();
                         }
                     });
                     if (serviceWorker.state === 'activated') {
@@ -492,7 +412,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
                     }
                 }, function (err) {
                     console.error('error while registering serviceWorker', err);
-                    refreshAPIStatus();
                     var message = "The ServiceWorker could not be properly registered. Switching back to jQuery mode. Error message : " + err;
                     var protocol = window.location.protocol;
                     if (protocol === 'moz-extension:') {
@@ -520,7 +439,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
         contentInjectionMode = value;
         // Save the value in a cookie, so that to be able to keep it after a reload/restart
         cookies.setItem('lastContentInjectionMode', value, Infinity);
-        refreshCacheStatus();
     }
             
     // At launch, we try to set the last content injection mode (stored in a cookie)
@@ -535,7 +453,6 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
     var serviceWorkerRegistration = null;
     
     // We need to establish the caching capabilities before first page launch
-    refreshCacheStatus();
     
     /**
      * Tells if the ServiceWorker API is available
