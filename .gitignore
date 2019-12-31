@@ -9,7 +9,7 @@
 *.vi
 *~
 *.sass-cache
-
+setup.py
 # OS or Editor folders
 .DS_Store
 ._*
@@ -54,3 +54,5 @@ www-ghdeploy
 #Visual Studio
 /.vs/
 /.vscode/
+
+activity
