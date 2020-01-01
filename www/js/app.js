@@ -744,6 +744,7 @@ define(['jquery', 'zimArchiveLoader', 'util', 'uiUtil', 'cookies','abstractFiles
      */
     function setLocalArchiveFromFileSelect() {
         setLocalArchiveFromFileList(document.getElementById('archiveFiles').files);
+        document.getElementById('filename').textContent = (document.getElementById('archiveFiles').files).toString()
     }
 
     /**
